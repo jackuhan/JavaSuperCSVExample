@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SuperCSVExample {
 
@@ -21,7 +23,7 @@ public class SuperCSVExample {
 
             test1();//通过Bean读写
 
-            test3();//通过List读写
+            test2();//通过List读写
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,22 +55,37 @@ public class SuperCSVExample {
     }
 
 
-    private static void test3() throws Exception {
-        List<String[]> content = new ArrayList<String[]>();
+    private static void test2() throws Exception {
+        List<List<String>> content = new ArrayList<List<String>>();
 
         InputStreamReader freader = new InputStreamReader(new FileInputStream(
                 new File("csv/test3.csv")), "GB2312");
 
         CsvListReader reader = new CsvListReader(freader,CsvPreference.EXCEL_PREFERENCE);
 
-        List<String> line = new ArrayList<String>();
-        while ((line = reader.read()) != null) {
-            content.add(line.toArray(new String[]{}));
+        List<String> lines = new ArrayList<String>();
+        while ((lines = reader.read()) != null) {
+            content.add(lines);
         }
 
+        int lineNum = content.size()-1;
+        int rowNum = 0;
         for (int i = 0; i <content.size() ; i++) {
-            System.out.println(content.get(i)[0] + "\t" + content.get(i)[1] + "\t" + content.get(i)[2] + "\t" + content.get(i)[3]);
+            List<String> rows = new ArrayList<String>();
+            rows = content.get(i);
+
+            if(rows.size()>rowNum){
+                rowNum = rows.size();
+            }
+
+            for (int j = 0; j <rows.size() ; j++) {
+                System.out.print(rows.get(j).trim()+"\t");
+            }
+            System.out.println("\t");
+
         }
+        System.out.println("\n"+"lineNum="+lineNum);
+        System.out.println("rowNum="+rowNum);
         System.out.println();
 
         reader.close();
